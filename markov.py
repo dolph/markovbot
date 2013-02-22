@@ -75,8 +75,7 @@ def slugify(s):
 
 
 def consume(s):
-    s = slugify(s)
-    s = s.split('-')
+    s = s.split(' ')
 
     for i, w in enumerate(s):
         w1 = s[i]
