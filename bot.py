@@ -56,6 +56,8 @@ class MarkovBot(irc.bot.SingleServerIRCBot):
         if len(a) > 1 and irc.strings.lower(a[0]) == conn:
             s = markov.produce()
             c.notice(self.channel, '%s: %s' % (e.source.nick, s))
+        elif 'bot' in e.source.nick or e.source.nick in ['gitcheffoo']:
+            pass
         else:
             for s in e.arguments:
                 markov.consume(s)
