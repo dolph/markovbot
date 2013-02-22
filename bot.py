@@ -15,11 +15,16 @@ The known commands are:
 """
 
 import argparse
+import logging
 
 import irc.bot
 import irc.strings
 
 import markov
+
+
+LOG = logging.getLogger(__name__)
+LOG.addHandler(logging.StreamHandler())
 
 
 class MarkovBot(irc.bot.SingleServerIRCBot):
@@ -70,8 +75,13 @@ def main():
 
     args = parser.parse_args()
 
-    bot = MarkovBot(args.channel, args.nickname, args.server, args.port)
-    bot.start()
+    while True:
+        try:
+            bot = MarkovBot(
+                args.channel, args.nickname,args.server, args.port)
+            bot.start()
+        except Exception as e:
+            LOG.exception(e)
 
 
 if __name__ == "__main__":
