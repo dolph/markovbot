@@ -1,37 +1,38 @@
 import unittest
 
+import db
 import markov
 
 
 class TestChains(unittest.TestCase):
     def tearDown(self):
-        markov.reset()
+        db.reset()
 
     def test_consume_one_word(self):
         markov.consume('Word.')
 
-        self.assertEqual(markov.list_next(None, 'Word.'), [None])
+        self.assertEqual(db.list_next(None, 'Word.'), [None])
 
     def test_consume_str(self):
         markov.consume('This is a very simple test.')
 
-        self.assertEqual(markov.list_next(None, 'This'), ['is'])
-        self.assertEqual(markov.list_next('This', 'is'), ['a'])
-        self.assertEqual(markov.list_next('is', 'a'), ['very'])
-        self.assertEqual(markov.list_next('a', 'very'), ['simple'])
-        self.assertEqual(markov.list_next('very', 'simple'), ['test.'])
-        self.assertEqual(markov.list_next('simple', 'test.'), [None])
+        self.assertEqual(db.list_next(None, 'This'), ['is'])
+        self.assertEqual(db.list_next('This', 'is'), ['a'])
+        self.assertEqual(db.list_next('is', 'a'), ['very'])
+        self.assertEqual(db.list_next('a', 'very'), ['simple'])
+        self.assertEqual(db.list_next('very', 'simple'), ['test.'])
+        self.assertEqual(db.list_next('simple', 'test.'), [None])
 
     def test_consume_str_with_multiple_paths(self):
         markov.consume('This is a test and is a loop.')
 
-        self.assertEqual(markov.list_next(None, 'This'), ['is'])
-        self.assertEqual(markov.list_next('This', 'is'), ['a'])
-        self.assertEqual(markov.list_next('is', 'a'), ['test', 'loop.'])
-        self.assertEqual(markov.list_next('a', 'test'), ['and'])
-        self.assertEqual(markov.list_next('test', 'and'), ['is'])
-        self.assertEqual(markov.list_next('and', 'is'), ['a'])
-        self.assertEqual(markov.list_next('a', 'loop.'), [None])
+        self.assertEqual(db.list_next(None, 'This'), ['is'])
+        self.assertEqual(db.list_next('This', 'is'), ['a'])
+        self.assertEqual(db.list_next('is', 'a'), ['test', 'loop.'])
+        self.assertEqual(db.list_next('a', 'test'), ['and'])
+        self.assertEqual(db.list_next('test', 'and'), ['is'])
+        self.assertEqual(db.list_next('and', 'is'), ['a'])
+        self.assertEqual(db.list_next('a', 'loop.'), [None])
 
     def test_consume_multiple_strings(self):
         markov.consume('This is a test.')
