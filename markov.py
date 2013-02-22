@@ -1,8 +1,45 @@
 import random
 import re
 
+import sqlalchemy as sql
+from sqlalchemy import orm
+from sqlalchemy.ext import declarative
 
-_DATA = {}
+
+engine = sql.create_engine('sqlite:///markov.db', echo=False)
+Session = orm.sessionmaker(bind=engine)
+Base = declarative.declarative_base()
+
+
+class Link(Base):
+    __tablename__ = 'links'
+
+    id = sql.Column(sql.Integer, primary_key=True)
+    word = sql.Column(sql.String, index=True)
+    next_word = sql.Column(sql.String)
+
+
+Base.metadata.create_all(engine)
+
+
+def reset():
+    session = Session()
+    session.query(Link).delete()
+    session.commit()
+
+
+def add_link(w1, w2):
+    session = Session()
+    ref = Link(word=w1, next_word=w2)
+    session.add(ref)
+    session.commit()
+
+
+def get_next(w=None):
+    session = Session()
+    words = [r.next_word for r in session.query(Link).filter_by(word=w).all()]
+    random.shuffle(words)
+    return words.pop()
 
 
 def slugify(s):
@@ -25,30 +62,22 @@ def consume(s):
 
     for i, w in enumerate(s):
         if i == 0:
-            _DATA.setdefault(None, [])
-            _DATA[None].append(w)
+            add_link(None, w)
 
         if i + 1 == len(s):
-            next_ = None
+            w2 = None
         else:
-            next_ = s[i + 1]
+            w2 = s[i + 1]
 
-        _DATA.setdefault(w, [])
-        _DATA[w].append(next_)
+        add_link(w, w2)
 
 
 def produce(w=None):
     s = []
 
-    w = get_next_word()
+    w = get_next()
     while w:
         s.append(w)
-        w = get_next_word(w)
+        w = get_next(w)
 
     return ' '.join(s)
-
-
-def get_next_word(w=None):
-    words = list(_DATA[w])
-    random.shuffle(words)
-    return words.pop()
