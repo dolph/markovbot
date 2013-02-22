@@ -95,10 +95,11 @@ def produce(w=None):
 
     w1, w2 = get_first()
     s.append(w1)
-    s.append(w2)
+    if w2:
+        s.append(w2)
 
     w3 = True
-    while w3:
+    while w1 and w2 and w3:
         w3 = get_next(w1, w2)
 
         if w3 is not None:
