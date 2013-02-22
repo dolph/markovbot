@@ -7,6 +7,11 @@ class TestChains(unittest.TestCase):
     def tearDown(self):
         markov.reset()
 
+    def test_consume_one_word(self):
+        markov.consume('Word.')
+
+        self.assertEqual(markov.list_next(None, 'word'), [None])
+
     def test_consume_str(self):
         markov.consume('This is a very simple test.')
 
